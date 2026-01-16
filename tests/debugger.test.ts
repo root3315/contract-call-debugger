@@ -5,6 +5,7 @@ import {
   simulateTransactionFailure,
 } from '../src/debugger.js';
 import {
+  ParsedTransaction,
   parseTransactionData,
   decodeCalldata,
   extractFunctionSelector,
@@ -36,7 +37,6 @@ const TEST_ABI: Array<{
     type: 'function',
     selector: '0xa9059cbb',
   },
-  },
   {
     inputs: [
       { name: 'spender', type: 'address' },
@@ -46,6 +46,7 @@ const TEST_ABI: Array<{
     outputs: [{ name: '', type: 'bool' }],
     stateMutability: 'nonpayable',
     type: 'function',
+    selector: '0x095ea7b3',
   },
 ];
 
@@ -57,12 +58,6 @@ function assertEqual(actual: unknown, expected: unknown, message: string): void 
 
 function assertTrue(condition: boolean, message: string): void {
   if (!condition) {
-    throw new Error(message);
-  }
-}
-
-function assertFalse(condition: boolean, message: string): void {
-  if (condition) {
     throw new Error(message);
   }
 }
@@ -342,7 +337,7 @@ test('updateConfig updates configuration', () => {
 console.log('\nFormatter Tests:');
 
 test('formatTransaction formats transaction', () => {
-  const tx = {
+  const tx: ParsedTransaction = {
     hash: '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef',
     from: '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb',
     to: '0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984',
@@ -350,7 +345,8 @@ test('formatTransaction formats transaction', () => {
     gasLimit: 21000n,
     nonce: 0,
     data: '0x',
-    status: 'success' as const,
+    status: 'success',
+    inputs: [],
   };
 
   const formatted = formatTransaction(tx);
@@ -360,7 +356,7 @@ test('formatTransaction formats transaction', () => {
 });
 
 test('formatTransactionSummary creates summary', () => {
-  const txs = [
+  const txs: ParsedTransaction[] = [
     {
       hash: '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef',
       from: '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb',
@@ -369,7 +365,8 @@ test('formatTransactionSummary creates summary', () => {
       gasLimit: 21000n,
       nonce: 0,
       data: '0x',
-      status: 'success' as const,
+      status: 'success',
+      inputs: [],
     },
     {
       hash: '0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
@@ -379,7 +376,8 @@ test('formatTransactionSummary creates summary', () => {
       gasLimit: 21000n,
       nonce: 1,
       data: '0x',
-      status: 'success' as const,
+      status: 'success',
+      inputs: [],
     },
   ];
 
@@ -408,7 +406,7 @@ test('estimateGasCost calculates cost', () => {
 });
 
 test('simulateTransactionFailure marks transaction as failed', () => {
-  const tx = {
+  const tx: ParsedTransaction = {
     hash: '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef',
     from: '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb',
     to: '0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984',
@@ -416,7 +414,8 @@ test('simulateTransactionFailure marks transaction as failed', () => {
     gasLimit: 100000n,
     nonce: 0,
     data: '0x',
-    status: 'success' as const,
+    status: 'success',
+    inputs: [],
   };
 
   const failed = simulateTransactionFailure('Out of gas', tx);

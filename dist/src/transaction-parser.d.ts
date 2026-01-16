@@ -40,6 +40,7 @@ export interface ContractABI {
     }>;
     stateMutability: string;
     type: 'function' | 'constructor' | 'event' | 'fallback' | 'receive';
+    selector?: string;
 }
 export declare function extractFunctionSelector(data: string): string | null;
 export declare function decodeCalldata(data: string, abi: ContractABI[]): {

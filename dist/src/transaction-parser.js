@@ -1,4 +1,3 @@
-import { ethers } from 'ethers';
 export function extractFunctionSelector(data) {
     if (data.length < 10 || !data.startsWith('0x')) {
         return null;
@@ -16,9 +15,10 @@ export function decodeCalldata(data, abi) {
     const functionABI = abi.find((item) => {
         if (item.type !== 'function')
             return false;
-        const signature = `${item.name}(${item.inputs.map((i) => i.type).join(',')})`;
-        const computedSelector = ethers.id(signature).slice(0, 10);
-        return computedSelector === selector;
+        if (item.selector) {
+            return item.selector === selector;
+        }
+        return false;
     });
     if (!functionABI) {
         return null;
@@ -76,7 +76,6 @@ function decodeParameter(calldata, type, offset) {
         }
     }
     if (type.startsWith('uint') || type.startsWith('int')) {
-        const bits = parseInt(type.slice(4));
         const value = BigInt('0x' + hexValue);
         return { value: Number(value), nextOffset: offset + 32 };
     }

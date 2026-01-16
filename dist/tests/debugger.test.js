@@ -11,6 +11,7 @@ const TEST_ABI = [
         outputs: [{ name: '', type: 'bool' }],
         stateMutability: 'nonpayable',
         type: 'function',
+        selector: '0xa9059cbb',
     },
     {
         inputs: [
@@ -21,6 +22,7 @@ const TEST_ABI = [
         outputs: [{ name: '', type: 'bool' }],
         stateMutability: 'nonpayable',
         type: 'function',
+        selector: '0x095ea7b3',
     },
 ];
 function assertEqual(actual, expected, message) {
@@ -30,11 +32,6 @@ function assertEqual(actual, expected, message) {
 }
 function assertTrue(condition, message) {
     if (!condition) {
-        throw new Error(message);
-    }
-}
-function assertFalse(condition, message) {
-    if (condition) {
         throw new Error(message);
     }
 }
@@ -274,6 +271,7 @@ test('formatTransaction formats transaction', () => {
         nonce: 0,
         data: '0x',
         status: 'success',
+        inputs: [],
     };
     const formatted = formatTransaction(tx);
     assertTrue(formatted.includes('0x1234'), 'Should include hash');
@@ -291,6 +289,7 @@ test('formatTransactionSummary creates summary', () => {
             nonce: 0,
             data: '0x',
             status: 'success',
+            inputs: [],
         },
         {
             hash: '0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
@@ -301,6 +300,7 @@ test('formatTransactionSummary creates summary', () => {
             nonce: 1,
             data: '0x',
             status: 'success',
+            inputs: [],
         },
     ];
     const summary = formatTransactionSummary(txs);
@@ -331,6 +331,7 @@ test('simulateTransactionFailure marks transaction as failed', () => {
         nonce: 0,
         data: '0x',
         status: 'success',
+        inputs: [],
     };
     const failed = simulateTransactionFailure('Out of gas', tx);
     assertEqual(failed.status, 'failed', 'Status should be failed');

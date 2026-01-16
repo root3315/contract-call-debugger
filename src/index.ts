@@ -1,6 +1,5 @@
-import { ContractCallDebugger, createDebugger, DebuggerConfig } from './debugger.js';
+import { ContractCallDebugger, DebuggerConfig } from './debugger.js';
 import {
-  ParsedTransaction,
   parseTransactionData,
   formatAddress,
 } from './transaction-parser.js';
