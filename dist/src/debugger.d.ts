@@ -78,6 +78,7 @@ export interface ReentrancyPoint {
     address: string;
     depth: number;
     callIndex: number;
+    reentrantFromDepth?: number;
 }
 export interface ReentrancyDetection {
     detected: boolean;

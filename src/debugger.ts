@@ -244,20 +244,28 @@ export class ContractCallDebugger {
 
     for (const call of trace) {
       const toAddress = call.to.toLowerCase();
-      const count = (addressCallCount.get(toAddress) || 0) + 1;
-      addressCallCount.set(toAddress, count);
 
-      if (count > 1 && call.depth > 0) {
+      if (call.error) {
+        callStack.length = 0;
+        continue;
+      }
+
+      const isReentrant = callStack.includes(toAddress);
+
+      if (isReentrant) {
+        const stackIndex = callStack.indexOf(toAddress);
         reentrancyPoints.push({
           address: call.to,
           depth: call.depth,
           callIndex: trace.indexOf(call),
+          reentrantFromDepth: stackIndex,
         });
       }
 
-      if (call.error) {
-        callStack.length = 0;
-      }
+      callStack.push(toAddress);
+
+      const count = (addressCallCount.get(toAddress) || 0) + 1;
+      addressCallCount.set(toAddress, count);
     }
 
     return {
@@ -355,6 +363,7 @@ export interface ReentrancyPoint {
   address: string;
   depth: number;
   callIndex: number;
+  reentrantFromDepth?: number;
 }
 
 export interface ReentrancyDetection {
